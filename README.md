@@ -35,10 +35,10 @@ Tag: { name, authorIds, _id }
 
 Basic Example
 ```javascript
-import * as MQR from 'mongoqueryresolver';
+const MQR = require('mongoqueryresolver');
 
-async function(){
-    const db = MQR.init("mongdb://localhost:27017/testdb");
+(async function () {
+    const db = await MQR.init("mongodb://localhost:27017/testdb");
     const authors = await MQR.filter({
         collection: "Author",
         limit: 3,
@@ -54,7 +54,7 @@ async function(){
         ]
     });
     console.log(authors);
-}
+})();
 ```
 Output
 ```json
@@ -77,10 +77,10 @@ Output
 
 More realistic Example
 ```javascript
-import * as MQR from 'mongoqueryresolver';
+const MQR = require('mongoqueryresolver');
 
 async function(){
-    const db = MQR.init("mongdb://localhost:27017/testdb");
+    const db = await MQR.init("mongodb://localhost:27017/testdb");
     let authors = await MQR.filter({
         collection: "Author",
         limit: 2,
