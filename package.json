@@ -1,8 +1,8 @@
 {
   "name": "mongoqueryresolver",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
-  "main": "index.ts",
+  "main": "bin/src/index.js",
   "files": ["bin/**/*"],
   "scripts": {
     "test": "mocha -r ts-node/register test/**/*.spec.ts -t 20000 --exit",
