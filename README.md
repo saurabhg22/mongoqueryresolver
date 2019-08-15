@@ -79,7 +79,7 @@ More realistic Example
 ```javascript
 const MQR = require('mongoqueryresolver');
 
-async function(){
+(async function(){
     const db = await MQR.init("mongodb://localhost:27017/testdb");
     let authors = await MQR.filter({
         collection: "Author",
@@ -140,7 +140,7 @@ async function(){
         }
     });
     console.log(authors);
-}
+})();
 ```
 Output
 ```json
