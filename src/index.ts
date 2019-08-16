@@ -15,10 +15,11 @@ export const init = async (mongoUri: string): Promise<Db> => {
     return db;
 }
 
-export const filter = async (filter:Filter) => {
+export const filter = async (filter: Filter) => {
     return find(db, filter);
 }
 
+export { Filter };
 
 
 
