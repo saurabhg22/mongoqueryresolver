@@ -6,7 +6,8 @@
         "preserveConstEnums": true,
         "outDir": "bin",
         "sourceMap": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "declaration": true
     },
     "include": [
         "src/**/*",

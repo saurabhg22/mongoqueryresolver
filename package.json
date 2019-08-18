@@ -1,6 +1,6 @@
 {
   "name": "mongoqueryresolver",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "bin/src/index.js",
   "files": ["bin/**/*"],
@@ -43,5 +43,6 @@
   "bugs": {
     "url": "https://github.com/saurabhg22/mongoqueryresolver/issues"
   },
-  "homepage": "https://github.com/saurabhg22/mongoqueryresolver#readme"
+  "homepage": "https://github.com/saurabhg22/mongoqueryresolver#readme",
+  "keywords": ["mongo", "query", "advance", "database", "relation", "collections"]
 }
