@@ -2,18 +2,28 @@
 interface BelongsTo {
     relation: "belongsTo",
     collection: string,
-    foreignKey: string
+    foreignKey: string,
+    primaryKey?:string
+}
+interface HasOne {
+    relation: "hasOne",
+    collection: string,
+    foreignKey: string,
+    primaryKey?:string
 }
 interface HasMany {
     relation: "hasMany",
     collection: string,
-    foreignKey: string
+    foreignKey: string,
+    primaryKey?:string
 }
 
 interface HasAndBelongsToMany {
     relation: "hasAndBelongsToMany",
     collection: string,
     foreignKey: string,
+    primaryKey?:string,
+    relationPrimaryKey?:string,
     relationKey: string,
     through: string,
     throughScope?: Omit<Filter, "collection">
@@ -21,7 +31,8 @@ interface HasAndBelongsToMany {
 interface ReferencesMany {
     relation: "referencesMany",
     collection: string,
-    foreignKey: string
+    foreignKey: string,
+    primaryKey?:string
 }
 
 export default interface Filter {
@@ -36,7 +47,7 @@ export default interface Filter {
         [key: string]: 1 | -1
     },
     include?: {
-        [key: string]: (BelongsTo | HasMany | HasAndBelongsToMany | ReferencesMany) & {
+        [key: string]: (BelongsTo | HasOne | HasMany | HasAndBelongsToMany | ReferencesMany) & {
             scope?: Omit<Filter, "collection">
         }
     }

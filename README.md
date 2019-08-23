@@ -4,7 +4,7 @@
 
 MongoQueryResolver is an open-source library which makes querying and formating MongoDB databases easy. It runs on top of mongodb find function and can 
 
-  - Include related models. (BelongsTo | HasMany | HasAndBelongsToMany | ReferencesMany)
+  - Include related models. (BelongsTo | HasOne | HasMany | HasAndBelongsToMany | ReferencesMany)
   - Do nested queries with infinite recursion
   - Formating
 
@@ -16,7 +16,7 @@ MongoQueryResolver is an open-source library which makes querying and formating 
 
 ### Installation
 
-Dillinger requires [Node.js](https://nodejs.org/) v10+ to run.
+MongoQueryResolver requires [Node.js](https://nodejs.org/) v10+ to run.
 
 ```sh
 $ npm i mongoqueryresolver -s

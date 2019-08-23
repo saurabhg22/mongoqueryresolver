@@ -74,7 +74,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         instance[field] = (await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { _id: instance[relation.foreignKey] }
+                            where: { [relation.primaryKey || '_id']: instance[relation.foreignKey] }
                         }))[0];
                         break;
                     case "hasAndBelongsToMany":
@@ -83,7 +83,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                             collection: relation.through,
                             where: {
                                 ..._.get(relation, "throughScope.where"),
-                                [relation.foreignKey]: instance._id
+                                [relation.foreignKey]: instance[relation.primaryKey || '_id']
                             },
                             fields: ["_id", relation.relationKey]
                         });
@@ -91,21 +91,28 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { _id: { $in: _.map(throughInstances, relation.relationKey) } }
+                            where: { [relation.relationPrimaryKey || '_id']: { $in: _.map(throughInstances, relation.relationKey) } }
                         })
+                        break;
+                    case "hasOne":
+                        instance[field] = (await find(db, {
+                            ...relation.scope,
+                            collection: relation.collection,
+                            where: { [relation.foreignKey]: instance[relation.primaryKey || '_id'] }
+                        }))[0];
                         break;
                     case "hasMany":
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { [relation.foreignKey]: instance._id }
+                            where: { [relation.foreignKey]: instance[relation.primaryKey || '_id'] }
                         });
                         break;
                     case "referencesMany":
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { _id: { $in: instance[relation.foreignKey] } }
+                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] } }
                         });
                     default:
                         break;
