@@ -1,7 +1,5 @@
 # Mongo Query Resolver
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 MongoQueryResolver is an open-source library which makes querying and formating MongoDB databases easy. It runs on top of mongodb find function and can 
 
   - Include related models. (BelongsTo | HasOne | HasMany | HasAndBelongsToMany | ReferencesMany)
