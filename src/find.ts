@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 const validatePath = (path: string) => {
 
-    if (path.indexOf(`.$.`) === 0 || path.indexOf(`.`) === 0) {
+    if (path.indexOf(`.$.`) === 0 || path.indexOf(`.`) === 0 || path.indexOf(`.$.`) === path.length - 3 || path.indexOf(`.`) === path.length - 1) {
         throw new Error(`Invalid field ${path}`);
     }
 }
