@@ -112,7 +112,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] } }
+                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] || []} }
                         });
                     default:
                         break;

@@ -3,13 +3,15 @@
   "version": "1.0.11",
   "description": "",
   "main": "bin/src/index.js",
-  "files": ["bin/**/*"],
+  "files": [
+    "bin/**/*"
+  ],
   "scripts": {
     "test": "mocha -r ts-node/register test/**/*.spec.ts -t 20000 --exit",
     "watch": "node_modules/typescript/bin/tsc -w",
     "build": "tsc",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm test"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "author": "Saurabh Gupta",
   "license": "ISC",
@@ -44,5 +46,14 @@
     "url": "https://github.com/saurabhg22/mongoqueryresolver/issues"
   },
   "homepage": "https://github.com/saurabhg22/mongoqueryresolver#readme",
-  "keywords": ["mongo", "query", "format", "database", "relation", "collections", "nesting", "aggregation"]
+  "keywords": [
+    "mongo",
+    "query",
+    "format",
+    "database",
+    "relation",
+    "collections",
+    "nesting",
+    "aggregation"
+  ]
 }
