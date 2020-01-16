@@ -112,7 +112,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] || []} }
+                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] || [] } }
                         });
                     default:
                         break;
@@ -123,8 +123,8 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
     }
     if (filter.fields) {
         let formatedResults = [];
-        for (let index = 0; index < results.length; index++) {
-            let formatedResult: { [key: string]: any } = {};
+        for (let index in results) {
+            let formatedResult: { [key: string]: any } = filter.includeRemainingFields ? results[index] : {};
             for (let field of filter.fields) {
                 if (typeof field == "string") {
                     formatedResult[field] = results[index][field];
@@ -151,9 +151,36 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
         }
         results = formatedResults;
     }
-
+    if (filter.exclude) {
+        for (let index in results) {
+            for (let excludeField of filter.exclude) {
+                results[index] = removeField(results[index], excludeField);
+            }
+        }
+    }
 
     return results;
+}
+
+const removeField = (data: { [key: string]: any }, field: string) => {
+    if (typeof data !== 'object') return data;
+    let _data = Object.assign({}, data);
+    if (_data[field]) {
+        delete _data[field];
+    }
+    else if (field.includes('.')) {
+        const dotAt = field.indexOf('.');
+        const key = field.slice(0, dotAt);
+        if (_data[key]) {
+            if (Array.isArray(_data[key])) {
+                _data[key] = _.map(_data[key], value => removeField(value, field.slice(dotAt + 1)));
+            }
+            else {
+                _data[key] = removeField(_data[key], field.slice(dotAt + 1));
+            }
+        }
+    }
+    return _data;
 }
 
 export default find;
