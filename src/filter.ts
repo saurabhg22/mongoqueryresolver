@@ -40,8 +40,8 @@ export default interface Filter {
     where?: {
         [key: string]: any
     },
-    exclude: string[],
-    includeRemainingFields: boolean,
+    exclude?: string[],
+    includeRemainingFields?: boolean,
     fields?: (string | { field: string, value: string, resolve?: boolean, makeUnique?: boolean, uniqBy?: string })[],
     limit?: number,
     skip?: number,
