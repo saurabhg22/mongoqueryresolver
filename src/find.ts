@@ -4,9 +4,19 @@ import { Db } from 'mongodb';
 import * as _ from 'lodash';
 
 const validatePath = (path: string) => {
-
-    if (path.indexOf(`.$.`) === 0 || path.indexOf(`.`) === 0 || path.indexOf(`.$.`) === path.length - 3 || path.indexOf(`.`) === path.length - 1) {
+    if (!path) throw new Error(`field is required`);
+    if(!path.includes('.$.') && !path.includes('.')) return;
+    const first$index = path.indexOf(`.$.`);
+    const firstdotindex = path.indexOf(`.`);
+    const last$index = path.lastIndexOf(`.$.`);
+    const lastdotindex = path.lastIndexOf(`.`);
+    if (first$index === 0 || firstdotindex === 0) {
         throw new Error(`Invalid field ${path}`);
+    }
+    if (last$index >= 0 && lastdotindex >= 0) {
+        if(last$index >= path.length - 3 || lastdotindex === path.length - 1){
+            throw new Error(`Invalid field ${path}`);
+        }
     }
 }
 const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
