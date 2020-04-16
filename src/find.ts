@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 const validatePath = (path: string) => {
     if (!path) throw new Error(`field is required`);
-    if(!path.includes('.$.') && !path.includes('.')) return;
+    if (!path.includes('.$.') && !path.includes('.')) return;
     const first$index = path.indexOf(`.$.`);
     const firstdotindex = path.indexOf(`.`);
     const last$index = path.lastIndexOf(`.$.`);
@@ -14,7 +14,7 @@ const validatePath = (path: string) => {
         throw new Error(`Invalid field ${path}`);
     }
     if (last$index >= 0 && lastdotindex >= 0) {
-        if(last$index >= path.length - 3 || lastdotindex === path.length - 1){
+        if (last$index >= path.length - 3 || lastdotindex === path.length - 1) {
             throw new Error(`Invalid field ${path}`);
         }
     }
@@ -132,34 +132,34 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
         }
     }
     if (filter.fields) {
-        let formatedResults = [];
-        for (let index in results) {
-            let formatedResult: { [key: string]: any } = filter.includeRemainingFields ? results[index] : {};
+        let formattedResults = [];
+        for (let index = 0; index < results.length; index++) {
+            let formattedResult: { [key: string]: any } = filter.includeRemainingFields ? results[index] : {};
             for (let field of filter.fields) {
                 if (typeof field == "string") {
-                    formatedResult[field] = results[index][field];
+                    formattedResult[field] = results[index][field];
                 }
                 else if (!field.resolve && typeof field.resolve !== 'undefined') {
-                    formatedResult[field.field] = field.value;
+                    formattedResult[field.field] = field.value;
                 }
                 else if (!field.value.includes('$')) {
-                    formatedResult[field.field] = _.get(results[index], field.value);
+                    formattedResult[field.field] = _.get(results[index], field.value);
                 }
                 else {
-                    formatedResult[field.field] = arrayMapper(field.value, results[index]);
+                    formattedResult[field.field] = arrayMapper(field.value, results[index]);
                     if (field.makeUnique) {
-                        if (_.isObject(formatedResult[field.field][0])) {
-                            formatedResult[field.field] = _.uniqBy(formatedResult[field.field], field.uniqBy || '_id');
+                        if (_.isObject(formattedResult[field.field][0])) {
+                            formattedResult[field.field] = _.uniqBy(formattedResult[field.field], field.uniqBy || '_id');
                         }
                         else {
-                            formatedResult[field.field] = _.uniq(formatedResult[field.field]);
+                            formattedResult[field.field] = _.uniq(formattedResult[field.field]);
                         }
                     }
                 }
             }
-            formatedResults.push(formatedResult);
+            formattedResults.push(formattedResult);
         }
-        results = formatedResults;
+        results = formattedResults;
     }
     if (filter.exclude) {
         for (let index in results) {
