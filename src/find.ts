@@ -74,6 +74,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
 
 
     let results = await cursor.toArray();
+    console.log(JSON.stringify(results));
     if (filter.include) {
         for (let field in filter.include) {
             let relation = filter.include[field];
@@ -162,7 +163,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
         results = formattedResults;
     }
     if (filter.exclude) {
-        for (let index in results) {
+        for (let index = 0; index < results.length; index++) {
             for (let excludeField of filter.exclude) {
                 results[index] = removeField(results[index], excludeField);
             }
