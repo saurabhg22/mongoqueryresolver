@@ -55,10 +55,10 @@ const fixDates = (obj: any) => {
     }
 
     if (obj[0] && obj.length) {
-        return obj.map(dateFixer);
+        return obj.map(fixDates);
     }
     for (let key in obj) {
-        obj[key] = dateFixer(obj[key]);
+        obj[key] = fixDates(obj[key]);
     }
 
     return obj;
