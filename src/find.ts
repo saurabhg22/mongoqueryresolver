@@ -19,6 +19,7 @@ const validatePath = (path: string) => {
         }
     }
 }
+
 const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
 
     validatePath(path);
@@ -48,6 +49,20 @@ const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
 
     return values;
 }
+const fixDates = (obj: any) => {
+    if (typeof obj !== 'object') {
+        return isNaN(new Date(obj).getTime()) ? obj : new Date(obj);
+    }
+
+    if (obj[0] && obj.length) {
+        return obj.map(dateFixer);
+    }
+    for (let key in obj) {
+        obj[key] = dateFixer(obj[key]);
+    }
+
+    return obj;
+}
 
 const find = async (db: Db, filter: Filter): Promise<any[]> => {
 
@@ -70,7 +85,8 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
         }
     }
 
-    let cursor = collection.find(filter.where, { projection, limit: filter.limit, sort: filter.sort, skip: filter.skip });
+
+    let cursor = collection.find(fixDates(filter.where), { projection, limit: filter.limit, sort: filter.sort, skip: filter.skip });
 
 
     let results = await cursor.toArray();
@@ -193,5 +209,6 @@ const removeField = (data: { [key: string]: any }, field: string) => {
     }
     return _data;
 }
+
 
 export default find;
