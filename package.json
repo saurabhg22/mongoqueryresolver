@@ -1,6 +1,6 @@
 {
   "name": "mongoqueryresolver",
-  "version": "1.0.15",
+  "version": "1.0.18",
   "description": "",
   "main": "bin/src/index.js",
   "files": [

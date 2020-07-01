@@ -51,14 +51,16 @@ const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
 }
 const fixDates = (obj: any) => {
     if (typeof obj !== 'object') {
-        return isNaN(new Date(obj).getTime()) ? obj : new Date(obj);
+        return typeof obj === 'string' && !isNaN(new Date(obj).getTime()) ? new Date(obj) : obj;
     }
 
     if (obj[0] && obj.length) {
         return obj.map(fixDates);
     }
     for (let key in obj) {
-        obj[key] = fixDates(obj[key]);
+        if (key !== '_id' && key !== 'id' && !key.match(/Id$/)) {
+            obj[key] = fixDates(obj[key]);
+        }
     }
 
     return obj;
