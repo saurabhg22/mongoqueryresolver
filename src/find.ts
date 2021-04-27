@@ -170,7 +170,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         if(formattedResult[field.field][0] instanceof ObjectId){
                             formattedResult[field.field] = _.uniqBy(formattedResult[field.field], id => id.toString());
                         }
-                        if (_.isObject(formattedResult[field.field][0])) {
+                        else if (_.isObject(formattedResult[field.field][0])) {
                             formattedResult[field.field] = _.uniqBy(formattedResult[field.field], field.uniqBy || '_id');
                         }
                         else {
