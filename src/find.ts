@@ -1,6 +1,6 @@
 
 import Filter from './filter';
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import * as _ from 'lodash';
 
 const validatePath = (path: string) => {
@@ -167,7 +167,10 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                 else {
                     formattedResult[field.field] = arrayMapper(field.value, results[index]);
                     if (field.makeUnique) {
-                        if (_.isObject(formattedResult[field.field][0])) {
+                        if(formattedResult[field.field][0] instanceof ObjectId){
+                            formattedResult[field.field] = _.uniqBy(formattedResult[field.field], id => id.toString());
+                        }
+                        else if (_.isObject(formattedResult[field.field][0])) {
                             formattedResult[field.field] = _.uniqBy(formattedResult[field.field], field.uniqBy || '_id');
                         }
                         else {

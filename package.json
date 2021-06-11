@@ -1,6 +1,10 @@
 {
   "name": "mongoqueryresolver",
+<<<<<<< HEAD
   "version": "1.0.22",
+=======
+  "version": "1.0.21",
+>>>>>>> 50e650e62bbb1625079b2872bf1d27a152925916
   "description": "",
   "main": "bin/src/index.js",
   "files": [
@@ -10,8 +14,7 @@
     "test": "mocha -r ts-node/register test/**/*.spec.ts -t 20000 --exit",
     "watch": "node_modules/typescript/bin/tsc -w",
     "build": "tsc",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test"
+    "prepare": "npm run build"
   },
   "author": "Saurabh Gupta",
   "license": "ISC",
