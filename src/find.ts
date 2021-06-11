@@ -25,11 +25,11 @@ const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
     validatePath(path);
 
     if (path.indexOf(`.$.`) === -1) {
-        return data[path];
+        return _.get(data, path);
     }
     let key = path.slice(0, path.indexOf(`.$.`));
 
-    let values: any[] = data[key] || [];
+    let values: any[] = _.get(data, key) || [];
 
     path = path.slice(path.indexOf(`.$.`) + 3);
 
