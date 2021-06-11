@@ -47,7 +47,7 @@ const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
         values = subValues;
     }
 
-    return values;
+    return _.filter(values, v => v !== null && v !== undefined);
 }
 const fixDates = (obj: any) => {
     if (typeof obj !== 'object') {
