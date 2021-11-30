@@ -191,6 +191,14 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                         results[index],
                         field.value,
                     );
+
+                    if (field.type === 'location') {
+                        const location = formattedResult[field.field];
+                        formattedResult[field.field] = {
+                            lat: location.lat || location[0],
+                            lon: location.lon || location.lng || location[1],
+                        };
+                    }
                 } else {
                     formattedResult[field.field] = arrayMapper(
                         field.value,
@@ -217,12 +225,20 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                             );
                         }
                     }
+
                     if (field.type === 'location') {
-                        const location = formattedResult[field.field];
-                        formattedResult[field.field] = {
-                            lat: location.lat || location[0],
-                            lon: location.lon || location.lng || location[1],
-                        };
+                        for (
+                            let i = 0;
+                            i < formattedResult[field.field].length;
+                            i++
+                        ) {
+                            const location = formattedResult[field.field][i];
+                            formattedResult[field.field][i] = {
+                                lat: location.lat || location[0],
+                                lon:
+                                    location.lon || location.lng || location[1],
+                            };
+                        }
                     }
                 }
             }
