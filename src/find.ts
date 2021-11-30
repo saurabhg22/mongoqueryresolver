@@ -1,4 +1,3 @@
-
 import Filter from './filter';
 import { Db, ObjectId } from 'mongodb';
 import * as _ from 'lodash';
@@ -18,10 +17,9 @@ const validatePath = (path: string) => {
             throw new Error(`Invalid field ${path}`);
         }
     }
-}
+};
 
 const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
-
     validatePath(path);
 
     if (path.indexOf(`.$.`) === -1) {
@@ -39,19 +37,20 @@ const arrayMapper = (path: string, data: { [key: string]: any }): any[] => {
             let subValue = arrayMapper(path, value);
             if (_.isArray(subValue)) {
                 subValues.push(...subValue);
-            }
-            else {
+            } else {
                 subValues.push(subValue);
             }
         }
         values = subValues;
     }
 
-    return _.filter(values, v => v !== null && v !== undefined);
-}
+    return _.filter(values, (v) => v !== null && v !== undefined);
+};
 const fixDates = (obj: any) => {
     if (typeof obj !== 'object') {
-        return typeof obj === 'string' && !isNaN(new Date(obj).getTime()) ? new Date(obj) : obj;
+        return typeof obj === 'string' && !isNaN(new Date(obj).getTime())
+            ? new Date(obj)
+            : obj;
     }
 
     if (obj[0] && obj.length) {
@@ -64,32 +63,32 @@ const fixDates = (obj: any) => {
     }
 
     return obj;
-}
+};
 
 const find = async (db: Db, filter: Filter): Promise<any[]> => {
-
     let collection = db.collection(filter.collection);
     let projection: { [key: string]: 1 };
     if (filter.fields) {
         for (let field of filter.fields) {
             projection = projection || {};
-            if (typeof field === "string") {
+            if (typeof field === 'string') {
                 validatePath(field);
                 projection[field] = 1;
-            }
-            else if (!field.value.includes('$') && !!!field.resolve) {
+            } else if (!field.value.includes('$') && !!!field.resolve) {
                 validatePath(field.value);
                 projection[field.value] = 1;
-            }
-            else {
+            } else {
                 validatePath(field.value);
             }
         }
     }
 
-
-    let cursor = collection.find(fixDates(filter.where), { projection, limit: filter.limit, sort: filter.sort, skip: filter.skip });
-
+    let cursor = collection.find(fixDates(filter.where), {
+        projection,
+        limit: filter.limit,
+        sort: filter.sort,
+        skip: filter.skip,
+    });
 
     let results = await cursor.toArray();
 
@@ -99,83 +98,131 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
             for (let index = 0; index < results.length; index++) {
                 let instance = results[index];
                 switch (relation.relation) {
-                    case "belongsTo":
-                        instance[field] = (await find(db, {
-                            ...relation.scope,
-                            collection: relation.collection,
-                            where: { [relation.primaryKey || '_id']: instance[relation.foreignKey] }
-                        }))[0];
+                    case 'belongsTo':
+                        instance[field] = (
+                            await find(db, {
+                                ...relation.scope,
+                                collection: relation.collection,
+                                where: {
+                                    [relation.primaryKey || '_id']:
+                                        instance[relation.foreignKey],
+                                },
+                            })
+                        )[0];
                         break;
-                    case "hasAndBelongsToMany":
+                    case 'hasAndBelongsToMany':
                         let throughInstances = await find(db, {
                             ...relation.throughScope,
                             collection: relation.through,
                             where: {
-                                ..._.get(relation, "throughScope.where"),
-                                [relation.foreignKey]: instance[relation.primaryKey || '_id']
+                                ..._.get(relation, 'throughScope.where'),
+                                [relation.foreignKey]:
+                                    instance[relation.primaryKey || '_id'],
                             },
-                            fields: ["_id", relation.relationKey]
+                            fields: ['_id', relation.relationKey],
                         });
 
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { [relation.relationPrimaryKey || '_id']: { $in: _.map(throughInstances, relation.relationKey) } }
-                        })
-                        break;
-                    case "hasOne":
-                        instance[field] = (await find(db, {
-                            ...relation.scope,
-                            collection: relation.collection,
-                            where: { [relation.foreignKey]: instance[relation.primaryKey || '_id'] }
-                        }))[0];
-                        break;
-                    case "hasMany":
-                        instance[field] = await find(db, {
-                            ...relation.scope,
-                            collection: relation.collection,
-                            where: { [relation.foreignKey]: instance[relation.primaryKey || '_id'] }
+                            where: {
+                                [relation.relationPrimaryKey || '_id']: {
+                                    $in: _.map(
+                                        throughInstances,
+                                        relation.relationKey,
+                                    ),
+                                },
+                            },
                         });
                         break;
-                    case "referencesMany":
+                    case 'hasOne':
+                        instance[field] = (
+                            await find(db, {
+                                ...relation.scope,
+                                collection: relation.collection,
+                                where: {
+                                    [relation.foreignKey]:
+                                        instance[relation.primaryKey || '_id'],
+                                },
+                            })
+                        )[0];
+                        break;
+                    case 'hasMany':
                         instance[field] = await find(db, {
                             ...relation.scope,
                             collection: relation.collection,
-                            where: { [relation.primaryKey || '_id']: { $in: instance[relation.foreignKey] || [] } }
+                            where: {
+                                [relation.foreignKey]:
+                                    instance[relation.primaryKey || '_id'],
+                            },
+                        });
+                        break;
+                    case 'referencesMany':
+                        instance[field] = await find(db, {
+                            ...relation.scope,
+                            collection: relation.collection,
+                            where: {
+                                [relation.primaryKey || '_id']: {
+                                    $in: instance[relation.foreignKey] || [],
+                                },
+                            },
                         });
                     default:
                         break;
                 }
             }
-
         }
     }
     if (filter.fields) {
         let formattedResults = [];
         for (let index = 0; index < results.length; index++) {
-            let formattedResult: { [key: string]: any } = filter.includeRemainingFields ? results[index] : {};
+            let formattedResult: { [key: string]: any } =
+                filter.includeRemainingFields ? results[index] : {};
             for (let field of filter.fields) {
-                if (typeof field == "string") {
+                if (typeof field == 'string') {
                     formattedResult[field] = results[index][field];
-                }
-                else if (!field.resolve && typeof field.resolve !== 'undefined') {
+                } else if (
+                    !field.resolve &&
+                    typeof field.resolve !== 'undefined'
+                ) {
                     formattedResult[field.field] = field.value;
-                }
-                else if (!field.value.includes('$')) {
-                    formattedResult[field.field] = _.get(results[index], field.value);
-                }
-                else {
-                    formattedResult[field.field] = arrayMapper(field.value, results[index]);
+                } else if (!field.value.includes('$')) {
+                    formattedResult[field.field] = _.get(
+                        results[index],
+                        field.value,
+                    );
+                } else {
+                    formattedResult[field.field] = arrayMapper(
+                        field.value,
+                        results[index],
+                    );
                     if (field.makeUnique) {
-                        if(formattedResult[field.field][0] instanceof ObjectId){
-                            formattedResult[field.field] = _.uniqBy(formattedResult[field.field], id => id.toString());
+                        if (
+                            formattedResult[field.field][0] instanceof ObjectId
+                        ) {
+                            formattedResult[field.field] = _.uniqBy(
+                                formattedResult[field.field],
+                                (id) => id.toString(),
+                            );
+                        } else if (
+                            _.isObject(formattedResult[field.field][0])
+                        ) {
+                            formattedResult[field.field] = _.uniqBy(
+                                formattedResult[field.field],
+                                field.uniqBy || '_id',
+                            );
+                        } else {
+                            formattedResult[field.field] = _.uniq(
+                                formattedResult[field.field],
+                            );
                         }
-                        else if (_.isObject(formattedResult[field.field][0])) {
-                            formattedResult[field.field] = _.uniqBy(formattedResult[field.field], field.uniqBy || '_id');
-                        }
-                        else {
-                            formattedResult[field.field] = _.uniq(formattedResult[field.field]);
-                        }
+                    }
+                    if (field.type === 'location') {
+                        const location = formattedResult[field.field];
+                        formattedResult[field.field] = {
+                            lat: location.lat || location[0],
+                            lon: location.lon || location.lng || location[1],
+                        };
                     }
                 }
             }
@@ -192,28 +239,27 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
     }
 
     return results;
-}
+};
 
 const removeField = (data: { [key: string]: any }, field: string) => {
     if (typeof data !== 'object') return data;
     let _data = Object.assign({}, data);
     if (_data[field]) {
         delete _data[field];
-    }
-    else if (field.includes('.')) {
+    } else if (field.includes('.')) {
         const dotAt = field.indexOf('.');
         const key = field.slice(0, dotAt);
         if (_data[key]) {
             if (Array.isArray(_data[key])) {
-                _data[key] = _.map(_data[key], value => removeField(value, field.slice(dotAt + 1)));
-            }
-            else {
+                _data[key] = _.map(_data[key], (value) =>
+                    removeField(value, field.slice(dotAt + 1)),
+                );
+            } else {
                 _data[key] = removeField(_data[key], field.slice(dotAt + 1));
             }
         }
     }
     return _data;
-}
-
+};
 
 export default find;
