@@ -193,7 +193,7 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                     );
 
                     if (field.type === 'location') {
-                        const location = formattedResult[field.field];
+                        const location = formattedResult[field.field] || {};
                         formattedResult[field.field] = {
                             lat: location.lat || location[0],
                             lon: location.lon || location.lng || location[1],
@@ -232,7 +232,8 @@ const find = async (db: Db, filter: Filter): Promise<any[]> => {
                             i < formattedResult[field.field].length;
                             i++
                         ) {
-                            const location = formattedResult[field.field][i];
+                            const location =
+                                formattedResult[field.field][i] || {};
                             formattedResult[field.field][i] = {
                                 lat: location.lat || location[0],
                                 lon:
